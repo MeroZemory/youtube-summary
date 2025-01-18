@@ -82,12 +82,16 @@ export async function POST(req: Request) {
     //   });
     // });
 
-    // ffmpeg를 사용하여 오디오 추출
+    // ffmpeg를 사용하여 오디오 추출 (압축된 형식으로)
     const audioPath = path.join(tempDir, `${Date.now()}.mp3`);
     await new Promise<void>((resolve, reject) => {
-      exec(`ffmpeg -i ${videoPath} -vn -q:a 0 ${audioPath}`, (error: Error | null) => {
+      // -ab: 비트레이트 설정 (64k = 64kbps)
+      // -ac: 오디오 채널 수 (1 = 모노)
+      // -ar: 샘플링 레이트 (16000 = 16kHz)
+      exec(`ffmpeg -i ${videoPath} -vn -ab 64k -ac 1 -ar 16000 ${audioPath}`, (error: Error | null, stdout: string, stderr: string) => {
         if (error) {
           console.error('ffmpeg 오류:', error);
+          console.error('ffmpeg stderr:', stderr);
           reject(error);
         } else {
           console.log('오디오 추출 완료');
@@ -96,15 +100,57 @@ export async function POST(req: Request) {
       });
     });
 
-    // Whisper API로 음성을 텍스트로 변환
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(audioPath),
-      model: "whisper-1",
-      response_format: "verbose_json",
-    }) as unknown as TranscriptionResponse;
+    // 오디오 파일을 여러 조각으로 나누기
+    const segmentDir = path.join(tempDir, 'segments');
+    if (!fs.existsSync(segmentDir)) {
+      fs.mkdirSync(segmentDir);
+    }
+    await new Promise<void>((resolve, reject) => {
+      exec(`ffmpeg -i ${audioPath} -f segment -segment_time 600 -c copy ${segmentDir}/output%03d.mp3`, (error: Error | null, stdout: string, stderr: string) => {
+        if (error) {
+          console.error('ffmpeg 분할 오류:', error);
+          console.error('ffmpeg stderr:', stderr);
+          reject(error);
+        } else {
+          console.log('오디오 분할 완료');
+          resolve();
+        }
+      });
+    });
+
+    // 각 조각을 Whisper API로 처리
+    const segmentFiles = fs.readdirSync(segmentDir).filter(file => file.endsWith('.mp3'));
+    let fullTranscription = '';
+    let totalDuration = 0;
+    const allSegments: Segment[] = [];
+
+    for (const segmentFile of segmentFiles) {
+      const segmentPath = path.join(segmentDir, segmentFile);
+      const transcription = await openai.audio.transcriptions.create({
+        file: fs.createReadStream(segmentPath),
+        model: "whisper-1",
+        response_format: "verbose_json",
+      }) as unknown as TranscriptionResponse;
+
+      // 각 세그먼트의 타임스탬프를 조정
+      transcription.segments.forEach(segment => {
+        segment.start += totalDuration;
+        segment.end += totalDuration;
+        allSegments.push(segment);
+      });
+
+      // 전체 트랜스크립션 텍스트 합치기
+      fullTranscription += transcription.text + ' ';
+
+      // 현재 조각의 길이를 계산하여 총 길이에 추가
+      const segmentDuration = transcription.segments.reduce((acc, segment) => acc + (segment.end - segment.start), 0);
+      totalDuration += segmentDuration;
+    }
 
     // 임시 파일 삭제
     fs.unlinkSync(audioPath);
+    segmentFiles.forEach(file => fs.unlinkSync(path.join(segmentDir, file)));
+    fs.rmdirSync(segmentDir);
 
     // GPT를 사용하여 요약 생성
     const summary = await openai.chat.completions.create({
@@ -116,16 +162,14 @@ export async function POST(req: Request) {
         },
         {
           role: "user",
-          content: `다음 텍스트를 한국어로 요약해주세요: ${transcription.text}`
+          content: `다음 텍스트를 한국어로 요약해주세요: ${fullTranscription}`
         }
       ]
     });
 
     return NextResponse.json({
-      // title,
-      // description,
       summary: summary.choices[0].message.content,
-      timestamps: transcription.segments.map((segment: Segment) => ({
+      timestamps: allSegments.map(segment => ({
         time: new Date(segment.start * 1000).toISOString().substring(11, 19),
         text: segment.text
       }))
