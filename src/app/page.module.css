@@ -166,3 +166,62 @@ a.secondary {
     filter: invert();
   }
 }
+
+.form {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:disabled {
+  background-color: #ccc;
+}
+
+.result {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.result h2 {
+  margin-bottom: 1rem;
+}
+
+.result h3 {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.result ul {
+  list-style: none;
+  padding: 0;
+}
+
+.result li {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.result li span {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
