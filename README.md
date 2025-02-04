@@ -44,6 +44,11 @@ npm install
 - `.env.development.local` 파일을 생성하고 `.env.development` 파일을 참고하여 필요한 값들을 설정합니다.
 - 실제 값들은 각각의 서비스에서 발급받아 설정해야 합니다.
 
+> ℹ️ **NEXTAUTH_SECRET 설정**:
+> - 개발 환경: 임의의 문자열을 사용해도 됩니다.
+> - 배포 환경: 반드시 안전한 랜덤 값을 사용해야 합니다. (예: `openssl rand -base64 32` 명령어로 생성)
+> - 이 값은 JWT 토큰 암호화와 쿠키 보안에 사용되므로, 프로덕션 환경에서는 필수입니다.
+
 ### Google API 설정
 
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 새 프로젝트를 생성합니다.
