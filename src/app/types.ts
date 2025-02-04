@@ -20,4 +20,18 @@ export interface ApiResponse {
   data?: VideoResult;
   error?: string;
   status?: string;
+}
+
+export interface SavedAnalysis {
+  id: string;
+  videoUrl: string;
+  videoTitle?: string;
+  thumbnailUrl?: string;
+  createdAt: string;
+  result: VideoResult;
+}
+
+export interface AnalysisStore {
+  analyses: SavedAnalysis[];
+  selectedAnalysisId: string | null;
 } 

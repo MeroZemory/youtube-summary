@@ -1,0 +1,55 @@
+.tabContainer {
+  width: 100%;
+  margin: 2rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tabList {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 150px;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+}
+
+.tab:hover {
+  background: #f3f4f6;
+}
+
+.tab.selected {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.tabTitle {
+  font-weight: 500;
+  color: #111827;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.tabDate {
+  font-size: 0.75rem;
+  color: #6b7280;
+} 

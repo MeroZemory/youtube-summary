@@ -9,6 +9,9 @@ import { useAutoScroll } from "./hooks/useAutoScroll";
 import { processVideo } from "./api/videoApi";
 import { VideoResult } from "./types";
 import LoginButton from "./components/LoginButton";
+import AnalysisTabs from "./components/AnalysisTabs";
+import AnalysisResult from "./components/AnalysisResult";
+import { useAnalysisStore } from "./hooks/useAnalysisStore";
 
 // 개발 환경에서만 기본 URL 사용
 const DEFAULT_VIDEO_URL = process.env.NEXT_PUBLIC_DEFAULT_VIDEO_URL || '';
@@ -21,6 +24,14 @@ export default function Home() {
   const [url, setUrl] = useState(DEFAULT_VIDEO_URL);
   
   const { autoScrollEnabled, resetAutoScroll } = useAutoScroll(progress);
+  const { 
+    analyses, 
+    selectedAnalysis, 
+    selectedId, 
+    setSelectedId, 
+    saveAnalysis, 
+    deleteAnalysis 
+  } = useAnalysisStore();
 
   const handleSubmit = async (submittedUrl: string) => {
     try {
@@ -37,6 +48,7 @@ export default function Home() {
         (data) => {
           setResult(data);
           setProgress('');
+          saveAnalysis(submittedUrl, data);
         },
         (error) => {
           setError(error);
@@ -59,7 +71,29 @@ export default function Home() {
         <VideoForm onSubmit={handleSubmit} loading={loading} defaultUrl={url} />
         <ProgressDisplay progress={progress} autoScrollEnabled={autoScrollEnabled} />
         <ErrorDisplay error={error} />
-        <ResultDisplay result={result} />
+        
+        {analyses.length > 0 && (
+          <div className={styles.analysisSection}>
+            <AnalysisTabs 
+              analyses={analyses} 
+              selectedId={selectedId} 
+              onSelect={setSelectedId} 
+            />
+            {selectedAnalysis && (
+              <div className={styles.analysisContent}>
+                <AnalysisResult analysis={selectedAnalysis} />
+                <button 
+                  className={styles.deleteButton}
+                  onClick={() => deleteAnalysis(selectedAnalysis.id)}
+                >
+                  삭제
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {result && !selectedAnalysis && <ResultDisplay result={result} />}
       </main>
     </div>
   );
