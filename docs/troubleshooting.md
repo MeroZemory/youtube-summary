@@ -9,9 +9,14 @@
 **증상**: URI는 경로를 포함하거나 '/'로 끝날 수 없습니다.
 
 **해결 방법**:
-- Google Cloud Console에서 승인된 자바스크립트 원본 확인
-- `http://localhost:3000`으로 정확히 설정 (끝에 슬래시 없이)
-- 경로(/path)가 포함되어 있다면 제거
+1. Google Cloud Console 접근 경로:
+   - APIs 및 서비스 → 사용자 인증 정보 → OAuth 2.0 Client ID
+   - 해당하는 OAuth 클라이언트 ID 선택 (예: `YouTubeGist Web Client`)
+   - "승인된 자바스크립트 원본" 섹션에서 URI 설정
+
+2. URI 설정:
+   - `http://localhost:3000`으로 정확히 설정 (끝에 슬래시 없이)
+   - 경로(/path)가 포함되어 있다면 제거
 
 ### 2. "redirect_uri_mismatch" 오류
 
