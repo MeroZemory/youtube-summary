@@ -1,0 +1,8 @@
+---
+description: 주석 규칙
+globs: 
+---
+
+# Your rule content
+
+- 주석은 지우는 것이 더 나은 상황에만 지우고 그렇지 않은 경우 그대로 두세요.

@@ -238,21 +238,31 @@ a.secondary {
 .progress h2 {
   margin-bottom: 1rem;
   color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .progress pre {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: monospace;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #666;
-  max-height: 400px;
+  max-height: 300px;
   overflow-y: auto;
+  background-color: #fff;
   padding: 1rem;
   border-radius: 4px;
-  background-color: #f8f8f8;
-  scroll-behavior: smooth;
+  margin: 0;
+  font-family: var(--font-geist-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.autoScrollStatus {
+  font-size: 0.8rem;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .error {
@@ -263,4 +273,24 @@ a.secondary {
   color: #ff0000;
   width: 100%;
   max-width: 800px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .progress {
+    background-color: #1a1a1a;
+  }
+
+  .progress pre {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .progress h2 {
+    color: #fff;
+  }
+
+  .autoScrollStatus {
+    background-color: #333;
+    color: #ccc;
+  }
 }

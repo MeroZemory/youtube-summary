@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   const sendProgress = async (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
     await writer.write(
-      encoder.encode(`data: ${JSON.stringify({ status: `[${timestamp}] ${message}` })}\n\n`)
+      encoder.encode(`data: ${JSON.stringify({ type: 'progress', status: `[${timestamp}] ${message}` })}\n\n`)
     );
   };
 
