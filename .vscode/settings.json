@@ -1,0 +1,3 @@
+{
+    "gitlens.ai.generateCommitMessage.customInstructions": "다음 규칙에 따라 커밋 메시지를 작성해주세요:  1. 형식 - type: Conventional Commits 사양 준수 (영문) - description: 50자 이내 핵심 변경사항 (한글, 종결어미 없음) - body: 선택적으로 작성 (한글)  2. 작성 규칙 - description은 변경사항의 핵심을 간단명료하게 표현 - body는 다음과 같은 중요한 변경사항의 경우에만 작성:   • 주요 기능 추가나 수정   • 중요한 버그 수정   • 큰 규모의 리팩터링   • Breaking change - 단순 수정이나 작은 규모의 변경은 description만 작성 - body 작성 시 각 항목은 `- `로 시작  3. type 판단 기준 - feat: 새로운 기능 추가 - fix: 버그 수정 - refactor: 외부 동작 변경 없는 내부 구조 개선 - style: 코드 포맷팅, 세미콜론 등 스타일 변경 - docs: 문서 수정 - test: 테스트 코드 추가/수정 - chore: 빌드 프로세스 등 기타 변경사항"
+}

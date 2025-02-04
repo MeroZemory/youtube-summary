@@ -25,13 +25,57 @@
 
 ### 3. "This browser or app may not be secure" 오류
 
-**증상**: 브라우저나 앱이 안전하지 않을 수 있습니다.
+**증상**: 
+- "This browser or app may not be secure. Learn more"
+- "Try using a different browser. If you're already using a supported browser, you can try again to sign in."
+
+**원인**:
+Google은 다음과 같은 브라우저에서의 로그인을 제한합니다:
+1. JavaScript가 비활성화된 브라우저
+2. 안전하지 않거나 지원되지 않는 확장 프로그램이 설치된 브라우저
+3. 소프트웨어 자동화를 통해 제어되는 브라우저
+4. 다른 애플리케이션에 임베드된 브라우저
 
 **해결 방법**:
-- Chrome 브라우저의 일반 모드 사용
-- 시크릿 모드 대신 일반 모드로 접속
-- 팝업 차단 해제 확인
-- 브라우저 캐시 및 쿠키 삭제 후 재시도
+
+1. 지원되는 브라우저 사용:
+   - Chrome (권장)
+   - Firefox
+   - Safari
+   - Edge
+   - Opera
+
+2. JavaScript 활성화:
+   - Chrome 설정 → 개인정보 및 보안 → 사이트 설정 → JavaScript
+   - JavaScript 허용으로 설정
+
+3. 브라우저 확장 프로그램 확인:
+   - 모든 확장 프로그램 일시적으로 비활성화
+   - 특히 자동화 도구나 보안 관련 확장 프로그램 확인
+
+4. 문제 해결 순서:
+   1. Chrome 최신 버전 사용
+   2. 모든 확장 프로그램 비활성화
+   3. JavaScript 설정 확인
+   4. 일반 모드에서 시도 (시크릿 모드 사용 X)
+
+⚠️ 주의: 
+- 회사 컴퓨터를 사용하는 경우 보안 정책으로 인해 제한될 수 있습니다.
+- 다른 애플리케이션에 임베드된 브라우저는 지원되지 않습니다.
+- IDE의 디버거로 실행된 Chrome에서는 Google 로그인이 제한됩니다.
+  - 디버거로 실행된 브라우저는 "소프트웨어 자동화를 통해 제어되는 브라우저"로 간주됨
+  - 개발/테스트 시에는 별도의 일반 Chrome 창을 사용해야 함
+
+### 4. 디버거 모드에서의 개발
+
+**권장 개발 방법**:
+1. 디버거로 실행된 Chrome: 
+   - 개발 및 디버깅 작업
+   - Google 로그인이 필요 없는 기능 테스트
+
+2. 별도의 일반 Chrome:
+   - Google 로그인 테스트
+   - OAuth 인증 관련 기능 테스트
 
 ## 환경 변수 관련 문제
 
