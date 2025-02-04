@@ -8,6 +8,7 @@ import ResultDisplay from "./components/ResultDisplay";
 import { useAutoScroll } from "./hooks/useAutoScroll";
 import { processVideo } from "./api/videoApi";
 import { VideoResult } from "./types";
+import LoginButton from "./components/LoginButton";
 
 // 개발 환경에서만 기본 URL 사용
 const DEFAULT_VIDEO_URL = process.env.NEXT_PUBLIC_DEFAULT_VIDEO_URL || '';
@@ -50,7 +51,10 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <h1>유튜브 동영상 분석</h1>
+        <div className={styles.header}>
+          <h1 className={styles.title}>유튜브 동영상 분석</h1>
+          <LoginButton />
+        </div>
         
         <VideoForm onSubmit={handleSubmit} loading={loading} defaultUrl={url} />
         <ProgressDisplay progress={progress} autoScrollEnabled={autoScrollEnabled} />

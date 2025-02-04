@@ -332,3 +332,44 @@ a.secondary {
     color: #ccc;
   }
 }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 2rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.loginButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #4285f4;
+  color: white;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.loginButton:hover {
+  background-color: #3367d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .loginButton {
+    background-color: #1a73e8;
+  }
+  
+  .loginButton:hover {
+    background-color: #174ea6;
+  }
+}
