@@ -41,8 +41,10 @@ export async function processVideo(
             const data = JSON.parse(line.slice(6)) as ApiResponse;
             if (data.type === 'complete' && data.data) {
               onComplete(data.data);
+              return; // 완료 후 즉시 종료
             } else if (data.type === 'error' && data.error) {
               onError(data.error);
+              return; // 에러 발생 시 즉시 종료
             } else if (data.type === 'progress' && data.status) {
               onProgress(data.status);
             }

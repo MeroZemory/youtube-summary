@@ -175,10 +175,15 @@ a.secondary {
   margin: 2rem 0;
 }
 
-.input {
+.inputWrapper {
   flex: 1;
   min-width: 300px;
   max-width: 800px;
+  position: relative;
+}
+
+.input {
+  width: 100%;
   padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -190,18 +195,22 @@ a.secondary {
   text-overflow: ellipsis;
 }
 
-.input:hover {
-  overflow: visible;
-  background-color: white;
-  position: relative;
-  z-index: 1;
+.inputError {
+  border-color: #ff0000;
 }
 
-.input:focus {
-  direction: ltr;
-  outline: none;
-  border-color: #0070f3;
-  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.1);
+.inputError:focus {
+  border-color: #ff0000;
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+.errorMessage {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 0.25rem;
+  color: #ff0000;
+  font-size: 0.875rem;
 }
 
 .button {
