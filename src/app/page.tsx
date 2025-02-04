@@ -30,11 +30,20 @@ export default function Home() {
     selectedId, 
     setSelectedId, 
     saveAnalysis, 
-    deleteAnalysis 
+    deleteAnalysis,
+    findAnalysisByUrl
   } = useAnalysisStore();
 
   const handleSubmit = async (submittedUrl: string) => {
     try {
+      // 기존 분석 결과 확인
+      const existingAnalysis = findAnalysisByUrl(submittedUrl);
+      if (existingAnalysis) {
+        setProgress('이미 분석된 영상입니다. 저장된 결과를 불러옵니다.\n');
+        setTimeout(() => setProgress(''), 2000);
+        return;
+      }
+
       setLoading(true);
       setError('');
       setProgress('');

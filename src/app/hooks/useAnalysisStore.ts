@@ -25,8 +25,24 @@ export function useAnalysisStore() {
     }
   }, []);
 
+  // URL로 기존 분석 결과 찾기
+  const findAnalysisByUrl = (videoUrl: string) => {
+    const found = analyses.find(analysis => analysis.videoUrl === videoUrl);
+    if (found) {
+      setSelectedId(found.id);
+      return found;
+    }
+    return null;
+  };
+
   // 분석 결과 저장
   const saveAnalysis = (videoUrl: string, result: VideoResult, videoTitle?: string, thumbnailUrl?: string) => {
+    // 이미 존재하는 분석 결과인지 확인
+    const existing = findAnalysisByUrl(videoUrl);
+    if (existing) {
+      return existing;
+    }
+
     const newAnalysis: SavedAnalysis = {
       id: Date.now().toString(),
       videoUrl,
@@ -40,6 +56,7 @@ export function useAnalysisStore() {
     setAnalyses(updatedAnalyses);
     setSelectedId(newAnalysis.id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
+    return newAnalysis;
   };
 
   // 분석 결과 삭제
@@ -62,5 +79,6 @@ export function useAnalysisStore() {
     setSelectedId,
     saveAnalysis,
     deleteAnalysis,
+    findAnalysisByUrl,
   };
 } 
