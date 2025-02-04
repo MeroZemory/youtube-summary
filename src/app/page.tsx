@@ -13,6 +13,7 @@ import { AnalysisTabs } from "./components/analysis/AnalysisTabs";
 import { AnalysisResult } from "./components/analysis/AnalysisResult";
 import { AnalysisNameInput } from "./components/analysis/AnalysisNameInput";
 import { useAnalysisStore } from "./hooks/useAnalysisStore";
+import { message } from "antd";
 
 // 개발 환경에서만 기본 URL 사용
 const DEFAULT_VIDEO_URL = process.env.NEXT_PUBLIC_DEFAULT_VIDEO_URL || '';
@@ -43,8 +44,7 @@ export default function Home() {
       // 기존 분석 결과 확인
       const existingAnalysis = findAnalysisByUrl(submittedUrl);
       if (existingAnalysis) {
-        setProgress('이미 분석된 영상입니다. 저장된 결과를 불러옵니다.\n');
-        setTimeout(() => setProgress(''), 2000);
+        message.info('이미 분석된 영상입니다. 저장된 결과를 불러왔습니다.');
         return;
       }
 

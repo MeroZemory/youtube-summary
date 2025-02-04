@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "next": "15.1.4",
     "next-auth": "^4.24.11",
     "openai": "^4.78.1",
