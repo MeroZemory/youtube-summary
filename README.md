@@ -33,7 +33,7 @@
 
 1. 프로젝트 클론 및 의존성 설치:
 ```bash
-git clone [repository-url]
+git clone https://github.com/MeroZemory/youtube-summary.git
 cd youtube-summary
 npm install
 ```
