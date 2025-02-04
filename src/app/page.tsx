@@ -9,8 +9,9 @@ import { useAutoScroll } from "./hooks/useAutoScroll";
 import { processVideo } from "./api/videoApi";
 import { VideoResult } from "./types";
 import LoginButton from "./components/LoginButton";
-import AnalysisTabs from "./components/AnalysisTabs";
-import AnalysisResult from "./components/AnalysisResult";
+import { AnalysisTabs } from "./components/analysis/AnalysisTabs";
+import { AnalysisResult } from "./components/analysis/AnalysisResult";
+import { AnalysisNameInput } from "./components/analysis/AnalysisNameInput";
 import { useAnalysisStore } from "./hooks/useAnalysisStore";
 
 // 개발 환경에서만 기본 URL 사용
@@ -22,6 +23,8 @@ export default function Home() {
   const [progress, setProgress] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [url, setUrl] = useState(DEFAULT_VIDEO_URL);
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [tempAnalysis, setTempAnalysis] = useState<{ id: string; videoUrl: string } | null>(null);
   
   const { autoScrollEnabled, resetAutoScroll } = useAutoScroll(progress);
   const { 
@@ -31,7 +34,8 @@ export default function Home() {
     setSelectedId, 
     saveAnalysis, 
     deleteAnalysis,
-    findAnalysisByUrl
+    findAnalysisByUrl,
+    setAnalysisName
   } = useAnalysisStore();
 
   const handleSubmit = async (submittedUrl: string) => {
@@ -57,7 +61,9 @@ export default function Home() {
         (data) => {
           setResult(data);
           setProgress('');
-          saveAnalysis(submittedUrl, data);
+          const analysis = saveAnalysis(submittedUrl, data);
+          setTempAnalysis({ id: analysis.id, videoUrl: submittedUrl });
+          setShowNameInput(true);
         },
         (error) => {
           setError(error);
@@ -66,6 +72,14 @@ export default function Home() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNameSubmit = (name: string) => {
+    if (tempAnalysis) {
+      setAnalysisName(tempAnalysis.id, name);
+      setShowNameInput(false);
+      setTempAnalysis(null);
     }
   };
 
@@ -81,12 +95,26 @@ export default function Home() {
         <ProgressDisplay progress={progress} autoScrollEnabled={autoScrollEnabled} />
         <ErrorDisplay error={error} />
         
+        {showNameInput && tempAnalysis && (
+          <div className={styles.nameInputContainer}>
+            <AnalysisNameInput
+              placeholder="분석 결과의 이름을 입력하세요"
+              onSubmit={handleNameSubmit}
+              onCancel={() => {
+                setShowNameInput(false);
+                setTempAnalysis(null);
+              }}
+            />
+          </div>
+        )}
+
         {analyses.length > 0 && (
           <div className={styles.analysisSection}>
             <AnalysisTabs 
               analyses={analyses} 
               selectedId={selectedId} 
-              onSelect={setSelectedId} 
+              onSelect={setSelectedId}
+              onRename={setAnalysisName}
             />
             {selectedAnalysis && (
               <div className={styles.analysisContent}>

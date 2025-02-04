@@ -29,6 +29,8 @@ export interface SavedAnalysis {
   thumbnailUrl?: string;
   createdAt: string;
   result: VideoResult;
+  name: string;
+  status: 'temporary' | 'named';
 }
 
 export interface AnalysisStore {

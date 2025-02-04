@@ -387,3 +387,9 @@ a.secondary {
 .deleteButton:hover {
   background: #dc2626;
 }
+
+.nameInputContainer {
+  margin: 2rem 0;
+  max-width: 600px;
+  width: 100%;
+}

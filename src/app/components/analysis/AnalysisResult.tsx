@@ -1,13 +1,13 @@
 'use client';
 
-import { SavedAnalysis } from '../types';
+import { SavedAnalysis } from '../../types';
 import styles from './AnalysisResult.module.css';
 
 interface AnalysisResultProps {
   analysis: SavedAnalysis;
 }
 
-export default function AnalysisResult({ analysis }: AnalysisResultProps) {
+export function AnalysisResult({ analysis }: AnalysisResultProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -19,7 +19,7 @@ export default function AnalysisResult({ analysis }: AnalysisResultProps) {
           />
         )}
         <div className={styles.info}>
-          <h2 className={styles.title}>{analysis.videoTitle || '무제'}</h2>
+          <h2 className={styles.title}>{analysis.name}</h2>
           <a 
             href={analysis.videoUrl} 
             target="_blank" 

@@ -50,6 +50,8 @@ export function useAnalysisStore() {
       thumbnailUrl,
       createdAt: new Date().toISOString(),
       result,
+      name: videoTitle || '새 분석',
+      status: 'temporary'
     };
 
     const updatedAnalyses = [newAnalysis, ...analyses];
@@ -57,6 +59,22 @@ export function useAnalysisStore() {
     setSelectedId(newAnalysis.id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
     return newAnalysis;
+  };
+
+  // 분석 결과 이름 지정/변경
+  const setAnalysisName = (id: string, name: string) => {
+    const updatedAnalyses = analyses.map(analysis => {
+      if (analysis.id === id) {
+        return {
+          ...analysis,
+          name,
+          status: 'named' as const
+        };
+      }
+      return analysis;
+    });
+    setAnalyses(updatedAnalyses);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
   };
 
   // 분석 결과 삭제
@@ -80,5 +98,6 @@ export function useAnalysisStore() {
     saveAnalysis,
     deleteAnalysis,
     findAnalysisByUrl,
+    setAnalysisName
   };
 } 
