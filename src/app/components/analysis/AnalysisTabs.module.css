@@ -47,14 +47,20 @@
 .tabTitle {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
   font-weight: 500;
   color: #111827;
   font-size: 0.875rem;
+  width: 100%;
+}
+
+.tabName {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  flex: 1;
+  min-width: 0;
 }
 
 .renameButton {
@@ -67,6 +73,7 @@
   line-height: 1;
   opacity: 0;
   transition: opacity 0.2s, color 0.2s;
+  flex-shrink: 0;
 }
 
 .tab:hover .renameButton {

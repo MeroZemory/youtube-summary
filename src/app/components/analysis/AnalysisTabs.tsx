@@ -39,7 +39,9 @@ export function AnalysisTabs({ analyses, selectedId, onSelect, onRename }: TabsP
               >
                 <div className={styles.tabContent}>
                   <div className={styles.tabTitle}>
-                    {analysis.name}
+                    <span className={styles.tabName} title={analysis.name}>
+                      {analysis.name}
+                    </span>
                     <button
                       className={styles.renameButton}
                       onClick={(e) => {

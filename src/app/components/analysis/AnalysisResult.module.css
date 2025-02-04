@@ -71,6 +71,27 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.timestamps::-webkit-scrollbar {
+  width: 8px;
+}
+
+.timestamps::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.timestamps::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.timestamps::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 .timestamp {
