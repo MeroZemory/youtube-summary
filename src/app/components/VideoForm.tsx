@@ -5,10 +5,11 @@ import styles from '../page.module.css';
 interface VideoFormProps {
   onSubmit: (url: string) => Promise<void>;
   loading: boolean;
+  defaultUrl: string;
 }
 
-export default function VideoForm({ onSubmit, loading }: VideoFormProps) {
-  const [url, setUrl] = useState('');
+export default function VideoForm({ onSubmit, loading, defaultUrl }: VideoFormProps) {
+  const [url, setUrl] = useState(defaultUrl);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,9 +24,10 @@ export default function VideoForm({ onSubmit, loading }: VideoFormProps) {
         onChange={(e) => setUrl(e.target.value)}
         placeholder="유튜브 URL을 입력하세요"
         className={styles.input}
+        disabled={loading}
       />
       <button type="submit" disabled={loading} className={styles.button}>
-        {loading ? '처리중...' : '분석하기'}
+        {loading ? '처리 중...' : '분석하기'}
       </button>
     </form>
   );

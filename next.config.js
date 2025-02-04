@@ -6,6 +6,10 @@ const nextConfig = {
   transpilePackages: ['ytdl-core'],
   webpack: (config) => {
     config.resolve.fallback = { 'ytdl-core': false }
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['!**/.env.*'],
+    };
     return config
   },
 }
