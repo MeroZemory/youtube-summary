@@ -25,6 +25,7 @@ export default function VideoForm({ onSubmit, loading, defaultUrl }: VideoFormPr
         placeholder="유튜브 URL을 입력하세요"
         className={styles.input}
         disabled={loading}
+        title={url}
       />
       <button type="submit" disabled={loading} className={styles.button}>
         {loading ? '처리 중...' : '분석하기'}
