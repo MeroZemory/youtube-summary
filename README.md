@@ -42,14 +42,18 @@ npm install
 
 2. 환경 변수 설정:
 - `.env.development.local` 파일을 생성하고 `.env.development` 파일을 참고하여 필요한 값들을 설정합니다.
-- 실제 값들은 각각의 서비스에서 발급받아 설정해야 합니다.
+- 필수 값:
+  - `OPENAI_API_KEY`: OpenAI API 키
+  - `NEXTAUTH_SECRET`: JWT 토큰 암호화 키 (개발 환경에서는 임의의 문자열 사용 가능)
 
 > ℹ️ **NEXTAUTH_SECRET 설정**:
 > - 개발 환경: 임의의 문자열을 사용해도 됩니다.
 > - 배포 환경: 반드시 안전한 랜덤 값을 사용해야 합니다. (예: `openssl rand -base64 32` 명령어로 생성)
 > - 이 값은 JWT 토큰 암호화와 쿠키 보안에 사용되므로, 프로덕션 환경에서는 필수입니다.
 
-### Google API 설정
+### Google API 설정 (선택 사항)
+
+현재는 Google 로그인 기능만 구현되어 있으며, 이 기능이 필요한 경우에만 설정하시면 됩니다.
 
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 새 프로젝트를 생성합니다.
 2. OAuth 동의 화면을 설정하고 필요한 API를 활성화합니다.
@@ -68,7 +72,7 @@ npm run dev
 > ℹ️ 포트 3000이 이미 사용 중인 경우:
 > - 자동으로 다른 포트(예: 3001, 3002 등)에서 실행됩니다.
 > - 실제 실행된 포트는 콘솔에서 확인할 수 있습니다.
-> - 이 경우 [Google OAuth 설정 가이드](docs/google-oauth-setup.md)를 참고하여 Google Cloud Console에서 **승인된 자바스크립트 원본**과 **승인된 리디렉션 URI**를 새로운 포트로 업데이트해야 합니다.
+> - Google 로그인 기능을 사용하는 경우, Google Cloud Console에서 **승인된 자바스크립트 원본**과 **승인된 리디렉션 URI**를 새로운 포트로 업데이트해야 합니다.
 
 ## 사용 방법
 
@@ -80,9 +84,8 @@ npm run dev
 ## 기술 스택
 
 - Frontend: Next.js, React, TypeScript
-- Authentication: NextAuth.js, Google OAuth
+- Authentication: NextAuth.js, Google OAuth (선택 사항)
 - AI/ML: OpenAI GPT-4, Whisper API
-- API: YouTube Data API v3
 - Styling: CSS Modules
 
 ## 라이선스
