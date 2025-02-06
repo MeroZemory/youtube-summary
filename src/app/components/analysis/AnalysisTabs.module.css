@@ -19,22 +19,33 @@
 .tab {
   width: 100%;
   padding: 0.75rem 1.5rem;
-  background: transparent;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
   border-radius: 0.5rem 0.5rem 0 0;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid #e5e7eb;
-  border-bottom: none;
 }
 
 .tab:hover {
-  background: #f3f4f6;
+  background: #f1f5f9;
 }
 
 .tab.selected {
-  background: #f3f4f6;
-  border-color: #d1d5db;
+  background: white;
+  border-color: #e5e7eb;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.tab.selected::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: white;
 }
 
 .tabContent {
@@ -49,9 +60,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  font-weight: 500;
-  color: #111827;
-  font-size: 0.875rem;
   width: 100%;
 }
 
@@ -61,13 +69,19 @@
   text-overflow: ellipsis;
   flex: 1;
   min-width: 0;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.tab.selected .tabName {
+  color: #0f172a;
 }
 
 .renameButton {
   padding: 0.25rem;
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: #94a3b8;
   cursor: pointer;
   font-size: 0.875rem;
   line-height: 1;
@@ -86,5 +100,46 @@
 
 .tabDate {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #94a3b8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .tab:hover {
+    background: #0f172a;
+  }
+
+  .tab.selected {
+    background: #0f172a;
+    border-color: #334155;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  .tab.selected::after {
+    background: #0f172a;
+  }
+
+  .tabName {
+    color: #94a3b8;
+  }
+
+  .tab.selected .tabName {
+    color: #f8fafc;
+  }
+
+  .renameButton {
+    color: #64748b;
+  }
+
+  .renameButton:hover {
+    color: #60a5fa;
+  }
+
+  .tabDate {
+    color: #64748b;
+  }
 } 

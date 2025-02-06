@@ -60,11 +60,24 @@ export function useAnalysisStore() {
   };
 
   const deleteAnalysis = (id: string) => {
+    const currentIndex = analyses.findIndex(analysis => analysis.id === id);
     const updatedAnalyses = analyses.filter(analysis => analysis.id !== id);
     setAnalyses(updatedAnalyses);
+
+    // 삭제된 항목이 현재 선택된 항목인 경우
     if (selectedId === id) {
-      setSelectedId(null);
+      if (updatedAnalyses.length === 0) {
+        // 더 이상 분석 결과가 없는 경우
+        setSelectedId(null);
+      } else if (currentIndex < updatedAnalyses.length) {
+        // 현재 위치에 다른 항목이 있는 경우 (우측 탭)
+        setSelectedId(updatedAnalyses[currentIndex].id);
+      } else {
+        // 현재 위치에 항목이 없는 경우 (마지막 항목이었던 경우)
+        setSelectedId(updatedAnalyses[currentIndex - 1].id);
+      }
     }
+    
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
   };
 
