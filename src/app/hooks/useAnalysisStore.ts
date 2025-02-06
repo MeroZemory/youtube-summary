@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SavedAnalysis, VideoResult } from '../types';
+import { SavedAnalysis, AnalysisResult } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'youtube-summary-analyses';
 
@@ -25,79 +26,59 @@ export function useAnalysisStore() {
     }
   }, []);
 
-  // URL로 기존 분석 결과 찾기
-  const findAnalysisByUrl = (videoUrl: string) => {
-    const found = analyses.find(analysis => analysis.videoUrl === videoUrl);
-    if (found) {
-      setSelectedId(found.id);
-      return found;
-    }
-    return null;
-  };
-
-  // 분석 결과 저장
-  const saveAnalysis = (videoUrl: string, result: VideoResult, videoTitle?: string, thumbnailUrl?: string) => {
-    // 이미 존재하는 분석 결과인지 확인
-    const existing = findAnalysisByUrl(videoUrl);
-    if (existing) {
-      return existing;
+  const addAnalysis = (videoUrl: string, result: AnalysisResult) => {
+    const videoInfoRaw = result?.videoInfoRaw;
+    
+    let name = '새 분석';
+    if (typeof videoInfoRaw === 'object' && videoInfoRaw !== null) {
+      if ("title" in videoInfoRaw && typeof videoInfoRaw.title === 'string') {
+        name = videoInfoRaw.title;
+      }
     }
 
     const newAnalysis: SavedAnalysis = {
-      id: Date.now().toString(),
+      id: uuidv4(),
+      name,
       videoUrl,
-      videoTitle,
-      thumbnailUrl,
-      createdAt: new Date().toISOString(),
       result,
-      name: videoTitle || '새 분석',
-      status: 'temporary'
+      createdAt: Date.now()
     };
 
-    const updatedAnalyses = [newAnalysis, ...analyses];
+    const updatedAnalyses = [...analyses, newAnalysis];
     setAnalyses(updatedAnalyses);
     setSelectedId(newAnalysis.id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
-    return newAnalysis;
+    return newAnalysis.id;
   };
 
-  // 분석 결과 이름 지정/변경
-  const setAnalysisName = (id: string, name: string) => {
-    const updatedAnalyses = analyses.map(analysis => {
-      if (analysis.id === id) {
-        return {
-          ...analysis,
-          name,
-          status: 'named' as const
-        };
-      }
-      return analysis;
-    });
+  const updateAnalysisName = (id: string, name: string) => {
+    const updatedAnalyses = analyses.map(analysis => 
+      analysis.id === id ? { ...analysis, name } : analysis
+    );
     setAnalyses(updatedAnalyses);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
   };
 
-  // 분석 결과 삭제
   const deleteAnalysis = (id: string) => {
     const updatedAnalyses = analyses.filter(analysis => analysis.id !== id);
     setAnalyses(updatedAnalyses);
     if (selectedId === id) {
-      setSelectedId(updatedAnalyses[0]?.id || null);
+      setSelectedId(null);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedAnalyses));
   };
 
-  // 선택된 분석 결과
-  const selectedAnalysis = analyses.find(analysis => analysis.id === selectedId);
+  const getSelectedAnalysis = () => {
+    return analyses.find(analysis => analysis.id === selectedId) || null;
+  };
 
   return {
     analyses,
-    selectedAnalysis,
     selectedId,
     setSelectedId,
-    saveAnalysis,
+    addAnalysis,
+    updateAnalysisName,
     deleteAnalysis,
-    findAnalysisByUrl,
-    setAnalysisName
+    getSelectedAnalysis,
   };
 } 

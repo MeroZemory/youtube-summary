@@ -33,31 +33,46 @@ export function AnalysisTabs({ analyses, selectedId, onSelect, onRename }: TabsP
                 submitLabel="변경"
               />
             ) : (
-              <button
+              <div
                 className={`${styles.tab} ${selectedId === analysis.id ? styles.selected : ''}`}
                 onClick={() => onSelect(analysis.id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    onSelect(analysis.id);
+                  }
+                }}
               >
                 <div className={styles.tabContent}>
                   <div className={styles.tabTitle}>
                     <span className={styles.tabName} title={analysis.name}>
                       {analysis.name}
                     </span>
-                    <button
+                    <div
                       className={styles.renameButton}
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditingId(analysis.id);
                       }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.stopPropagation();
+                          setEditingId(analysis.id);
+                        }
+                      }}
                       title="이름 변경"
                     >
                       ✎
-                    </button>
+                    </div>
                   </div>
                   <div className={styles.tabDate}>
                     {new Date(analysis.createdAt).toLocaleDateString()}
                   </div>
                 </div>
-              </button>
+              </div>
             )}
           </div>
         ))}

@@ -7,10 +7,10 @@ import ErrorDisplay from "./components/ErrorDisplay";
 import ResultDisplay from "./components/ResultDisplay";
 import { useAutoScroll } from "./hooks/useAutoScroll";
 import { processVideo } from "./api/videoApi";
-import { VideoResult } from "./types";
+import { AnalysisResult, ParsedVideoInfo, zodVideoInfo } from "./types";
 import LoginButton from "./components/LoginButton";
 import { AnalysisTabs } from "./components/analysis/AnalysisTabs";
-import { AnalysisResult } from "./components/analysis/AnalysisResult";
+import { AnalysisResult as AnalysisResultComponent } from "./components/analysis/AnalysisResult";
 import { AnalysisNameInput } from "./components/analysis/AnalysisNameInput";
 import { useAnalysisStore } from "./hooks/useAnalysisStore";
 import { message } from "antd";
@@ -20,7 +20,7 @@ const DEFAULT_VIDEO_URL = process.env.NEXT_PUBLIC_DEFAULT_VIDEO_URL || '';
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<VideoResult | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
   const [progress, setProgress] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [url, setUrl] = useState(DEFAULT_VIDEO_URL);
@@ -30,20 +30,20 @@ export default function Home() {
   const { autoScrollEnabled, resetAutoScroll } = useAutoScroll(progress);
   const { 
     analyses, 
-    selectedAnalysis, 
-    selectedId, 
-    setSelectedId, 
-    saveAnalysis, 
+    selectedId,
+    setSelectedId,
+    addAnalysis,
+    updateAnalysisName,
     deleteAnalysis,
-    findAnalysisByUrl,
-    setAnalysisName
+    getSelectedAnalysis
   } = useAnalysisStore();
 
   const handleSubmit = async (submittedUrl: string) => {
     try {
       // 기존 분석 결과 확인
-      const existingAnalysis = findAnalysisByUrl(submittedUrl);
+      const existingAnalysis = analyses.find(analysis => analysis.videoUrl === submittedUrl);
       if (existingAnalysis) {
+        setSelectedId(existingAnalysis.id);
         message.info('이미 분석된 영상입니다. 저장된 결과를 불러왔습니다.');
         return;
       }
@@ -61,8 +61,8 @@ export default function Home() {
         (data) => {
           setResult(data);
           setProgress('');
-          const analysis = saveAnalysis(submittedUrl, data);
-          setTempAnalysis({ id: analysis.id, videoUrl: submittedUrl });
+          const newId = addAnalysis(submittedUrl, data);
+          setTempAnalysis({ id: newId, videoUrl: submittedUrl });
           setShowNameInput(true);
         },
         (error) => {
@@ -75,13 +75,20 @@ export default function Home() {
     }
   };
 
-  const handleNameSubmit = (name: string) => {
-    if (tempAnalysis) {
-      setAnalysisName(tempAnalysis.id, name);
-      setShowNameInput(false);
-      setTempAnalysis(null);
+  const selectedAnalysis = getSelectedAnalysis();
+
+  // 선택된 분석 결과의 videoInfoRaw을 ParsedVideoInfo로 파싱
+  let parsedVideoInfo: ParsedVideoInfo | null = null;
+  if (selectedAnalysis !== null) {
+    const zodResult = zodVideoInfo.safeParse(selectedAnalysis.result.videoInfoRaw);
+    if (!zodResult.success) {
+      // 로그 출력
+      console.error(`videoInfoRaw is not a valid zodVideoInfo. videoInfoRaw: ${selectedAnalysis.result.videoInfoRaw}, error: ${zodResult.error.message}`);
     }
-  };
+    else {
+      parsedVideoInfo = zodResult;
+    }
+  }
 
   return (
     <div className={styles.page}>
@@ -98,9 +105,16 @@ export default function Home() {
         {showNameInput && tempAnalysis && (
           <div className={styles.nameInputContainer}>
             <AnalysisNameInput
-              placeholder="분석 결과의 이름을 입력하세요"
-              onSubmit={handleNameSubmit}
+              initialName={(() => {
+                return parsedVideoInfo?.title || '';
+              })()}
+              onSubmit={(name) => {
+                updateAnalysisName(tempAnalysis.id, name);
+                setShowNameInput(false);
+                setTempAnalysis(null);
+              }}
               onCancel={() => {
+                deleteAnalysis(tempAnalysis.id);
                 setShowNameInput(false);
                 setTempAnalysis(null);
               }}
@@ -114,11 +128,11 @@ export default function Home() {
               analyses={analyses} 
               selectedId={selectedId} 
               onSelect={setSelectedId}
-              onRename={setAnalysisName}
+              onRename={updateAnalysisName}
             />
-            {selectedAnalysis && (
+            {selectedAnalysis && parsedVideoInfo && (
               <div className={styles.analysisContent}>
-                <AnalysisResult analysis={selectedAnalysis} />
+                <AnalysisResultComponent analysis={selectedAnalysis} videoInfo={parsedVideoInfo} />
                 <button 
                   className={styles.deleteButton}
                   onClick={() => deleteAnalysis(selectedAnalysis.id)}
@@ -130,7 +144,12 @@ export default function Home() {
           </div>
         )}
 
-        {result && !selectedAnalysis && <ResultDisplay result={result} />}
+        {result && !selectedAnalysis && (
+          <ResultDisplay 
+            result={result} 
+            videoInfo={parsedVideoInfo}
+          />
+        )}
       </main>
     </div>
   );

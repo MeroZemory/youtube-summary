@@ -1,9 +1,9 @@
-import { ApiResponse, VideoResult } from '../types';
+import { ApiResponse, AnalysisResult } from '../types';
 
 export async function processVideo(
   url: string,
   onProgress: (status: string) => void,
-  onComplete: (data: VideoResult) => void,
+  onComplete: (data: AnalysisResult) => void,
   onError: (error: string) => void
 ) {
   let response: Response | null = null;

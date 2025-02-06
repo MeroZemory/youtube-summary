@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface Segment {
   start: number;
   end: number;
@@ -9,31 +11,40 @@ export interface TranscriptionResponse {
   segments: Segment[];
 }
 
-export interface VideoResult {
+export interface ProcessingTime {
+  step: string;
+  duration: number;  // 초 단위
+}
+
+export const zodVideoInfo = z.object({
+  title: z.string().optional(),
+  thumbnail: z.string().optional(),
+  duration: z.number().optional(),
+  channel: z.string().optional(),
+  upload_date: z.string().optional(),
+}).passthrough();
+
+export type ParsedVideoInfo = z.infer<typeof zodVideoInfo>;
+
+export interface AnalysisResult {
   summary: string;
   timestamps: Array<{time: string, text: string}>;
-  processingTimes: Array<{step: string, duration: number}>;
+  processingTimes: ProcessingTime[];
+  totalDuration: number;
+  videoInfoRaw: unknown;
 }
 
 export interface ApiResponse {
   type: 'complete' | 'error' | 'progress';
-  data?: VideoResult;
+  data?: AnalysisResult;
   error?: string;
   status?: string;
 }
 
 export interface SavedAnalysis {
   id: string;
-  videoUrl: string;
-  videoTitle?: string;
-  thumbnailUrl?: string;
-  createdAt: string;
-  result: VideoResult;
   name: string;
-  status: 'temporary' | 'named';
+  videoUrl: string;
+  result: AnalysisResult;
+  createdAt: number;
 }
-
-export interface AnalysisStore {
-  analyses: SavedAnalysis[];
-  selectedAnalysisId: string | null;
-} 

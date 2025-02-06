@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
-import {create as createYoutubeDl } from 'youtube-dl-exec';
+import { create as createYoutubeDl } from 'youtube-dl-exec';
 import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
 import { TranscriptionResponse, Segment } from '@/app/types';
 import { exec } from 'child_process';
+import { ProcessingTime } from '@/app/types';
+import { z } from 'zod';
 
 const youtubedl = createYoutubeDl('C:/yt-dlp/yt-dlp.exe');
 
@@ -16,11 +18,6 @@ process.on('unhandledRejection', (reason, promise) => {
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-interface ProcessingTime {
-  step: string;
-  duration: number;  // 초 단위
-}
 
 function getTimeInSeconds(startTime: number): number {
   return (Date.now() - startTime) / 1000;
@@ -57,6 +54,18 @@ export async function POST(req: Request) {
         await sendProgress('API 호출 시작');
         const { url } = await req.json();
         await sendProgress('URL 수신 완료');
+
+        // 영상 정보 가져오기
+        await sendProgress('영상 정보 가져오기 시작');
+        const videoInfoRaw = await youtubedl(url, {
+          dumpSingleJson: true,
+          noCheckCertificates: true,
+          noWarnings: true,
+          preferFreeFormats: true,
+          addHeader: ['referer:youtube.com', 'user-agent:googlebot']
+        });
+
+        await sendProgress('영상 정보 가져오기 완료');
 
         const tempDir = path.join(process.cwd(), 'temp');
         if (!fs.existsSync(tempDir)) {
@@ -176,13 +185,14 @@ export async function POST(req: Request) {
         // 최종 결과 전송 (진행 상황에 표시하지 않음)
         const totalDurationSeconds = getTimeInSeconds(totalStartTime);
         const result = {
-          summary: summary.choices[0].message.content,
+          summary: summary.choices[0].message.content?.trim(),
           timestamps: allSegments.map(segment => ({
             time: new Date(segment.start * 1000).toISOString().substring(11, 19),
             text: segment.text
           })),
           processingTimes,
-          totalDuration: totalDurationSeconds
+          totalDuration: totalDurationSeconds,
+          videoInfoRaw
         };
         await writer.write(
           encoder.encode(`data: ${JSON.stringify({ type: 'complete', data: result })}\n\n`)

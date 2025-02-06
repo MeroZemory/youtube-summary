@@ -1,20 +1,24 @@
 'use client';
 
-import { SavedAnalysis } from '../../types';
+import { SavedAnalysis, ParsedVideoInfo } from '@/app/types';
 import styles from './AnalysisResult.module.css';
+import Image from 'next/image';
 
 interface AnalysisResultProps {
   analysis: SavedAnalysis;
+  videoInfo: ParsedVideoInfo;
 }
 
-export function AnalysisResult({ analysis }: AnalysisResultProps) {
+export function AnalysisResult({ analysis, videoInfo }: AnalysisResultProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {analysis.thumbnailUrl && (
-          <img 
-            src={analysis.thumbnailUrl} 
-            alt="비디오 썸네일" 
+        {videoInfo.thumbnail && (
+          <Image 
+            src={videoInfo.thumbnail} 
+            alt="비디오 썸네일"
+            width={480}
+            height={360}
             className={styles.thumbnail}
           />
         )}
@@ -28,6 +32,14 @@ export function AnalysisResult({ analysis }: AnalysisResultProps) {
           >
             원본 영상 보기
           </a>
+          <div className={styles.videoInfo}>
+            <span className={styles.channel}>{videoInfo.channel}</span>
+            {videoInfo.duration && (
+              <span className={styles.duration}>
+                {Math.floor(videoInfo.duration / 60)}:{(videoInfo.duration % 60).toString().padStart(2, '0')}
+              </span>
+            )}
+          </div>
           <div className={styles.date}>
             분석일: {new Date(analysis.createdAt).toLocaleString()}
           </div>

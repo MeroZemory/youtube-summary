@@ -135,4 +135,24 @@
 .duration {
   color: #6b7280;
   font-family: monospace;
+}
+
+.videoInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.channel {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.duration {
+  font-family: monospace;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
 } 
