@@ -14,6 +14,8 @@ export interface TranscriptionResponse {
 export interface ProcessingTime {
   step: string;
   duration: number;  // 초 단위
+  startTime: number; // Unix timestamp
+  endTime: number;   // Unix timestamp
 }
 
 export const zodVideoInfo = z.object({

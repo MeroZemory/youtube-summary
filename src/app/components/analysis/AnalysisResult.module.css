@@ -116,25 +116,62 @@
 .processingTimes {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 .processingTime {
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.processingTimeHeader {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem;
-  background: #f9fafb;
-  border-radius: 0.25rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.processingTimeDetails {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
 .step {
-  color: #374151;
   font-weight: 500;
+  color: #374151;
 }
 
 .duration {
-  color: #6b7280;
-  font-family: monospace;
+  font-family: var(--font-geist-mono);
+  color: #2563eb;
+}
+
+.totalTime {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 0.5rem;
+  border: 1px solid #bae6fd;
+}
+
+.totalTimeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.totalTime .step {
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.totalTime .duration {
+  color: #0369a1;
+  font-weight: 600;
 }
 
 .videoInfo {
@@ -155,4 +192,32 @@
   background: #f3f4f6;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .processingTime {
+    background: #1f2937;
+  }
+
+  .processingTimeDetails {
+    color: #9ca3af;
+  }
+
+  .step {
+    color: #e5e7eb;
+  }
+
+  .duration {
+    color: #60a5fa;
+  }
+
+  .totalTime {
+    background: #1e3a8a;
+    border-color: #1d4ed8;
+  }
+
+  .totalTime .step,
+  .totalTime .duration {
+    color: #93c5fd;
+  }
 } 

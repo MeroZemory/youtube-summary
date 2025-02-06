@@ -152,6 +152,8 @@ a.secondary {
     flex-direction: column;
     align-items: center;
     padding-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
   }
 }
 
@@ -419,6 +421,8 @@ a.secondary {
   cursor: pointer;
   font-size: 0.875rem;
   transition: background-color 0.2s;
+  z-index: 10;
+  user-select: none;
 }
 
 .deleteButton:hover {
@@ -426,7 +430,5 @@ a.secondary {
 }
 
 .nameInputContainer {
-  margin: 2rem 0;
-  max-width: 600px;
-  width: 100%;
+  display: none;
 }

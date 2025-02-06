@@ -69,10 +69,28 @@ export function AnalysisResult({ analysis, videoInfo }: AnalysisResultProps) {
           <div className={styles.processingTimes}>
             {analysis.result.processingTimes.map((time, index) => (
               <div key={index} className={styles.processingTime}>
-                <span className={styles.step}>{time.step}</span>
-                <span className={styles.duration}>{time.duration.toFixed(2)}초</span>
+                <div className={styles.processingTimeHeader}>
+                  <span className={styles.step}>{time.step}</span>
+                  <span className={styles.duration}>{time.duration.toFixed(2)}초</span>
+                </div>
+                <div className={styles.processingTimeDetails}>
+                  <span>시작: {new Date(time.startTime).toLocaleTimeString()}</span>
+                  <span>종료: {new Date(time.endTime).toLocaleTimeString()}</span>
+                </div>
               </div>
             ))}
+            <div className={styles.totalTime}>
+              <div className={styles.totalTimeHeader}>
+                <span className={styles.step}>전체 처리 시간</span>
+                <span className={styles.duration}>
+                  {analysis.result.processingTimes.reduce((acc, curr) => acc + curr.duration, 0).toFixed(2)}초
+                </span>
+              </div>
+              <div className={styles.processingTimeDetails}>
+                <span>시작: {new Date(analysis.result.processingTimes[0]?.startTime).toLocaleTimeString()}</span>
+                <span>종료: {new Date(analysis.result.processingTimes[analysis.result.processingTimes.length - 1]?.endTime).toLocaleTimeString()}</span>
+              </div>
+            </div>
           </div>
         </section>
       </div>

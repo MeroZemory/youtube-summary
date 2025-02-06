@@ -80,9 +80,15 @@ export async function POST(req: Request) {
           output: videoPath,
           format: 'bestvideo+bestaudio/best',
         });
-        const downloadDuration = getTimeInSeconds(downloadStartTime);
+        const downloadEndTime = Date.now();
+        const downloadDuration = (downloadEndTime - downloadStartTime) / 1000;
         await sendProgress(`비디오 다운로드 완료 (${downloadDuration}초)`);
-        processingTimes.push({ step: '비디오 다운로드', duration: downloadDuration });
+        processingTimes.push({ 
+          step: '비디오 다운로드', 
+          duration: downloadDuration,
+          startTime: downloadStartTime,
+          endTime: downloadEndTime
+        });
 
         // 오디오 추출
         const extractStartTime = Date.now();
@@ -99,9 +105,15 @@ export async function POST(req: Request) {
             }
           });
         });
-        const extractDuration = getTimeInSeconds(extractStartTime);
+        const extractEndTime = Date.now();
+        const extractDuration = (extractEndTime - extractStartTime) / 1000;
         await sendProgress(`오디오 추출 완료 (${extractDuration}초)`);
-        processingTimes.push({ step: '오디오 추출', duration: extractDuration });
+        processingTimes.push({ 
+          step: '오디오 추출', 
+          duration: extractDuration,
+          startTime: extractStartTime,
+          endTime: extractEndTime
+        });
 
         // 오디오 분할
         const splitStartTime = Date.now();
@@ -121,9 +133,15 @@ export async function POST(req: Request) {
             }
           });
         });
-        const splitDuration = getTimeInSeconds(splitStartTime);
+        const splitEndTime = Date.now();
+        const splitDuration = (splitEndTime - splitStartTime) / 1000;
         await sendProgress(`오디오 분할 완료 (${splitDuration}초)`);
-        processingTimes.push({ step: '오디오 분할', duration: splitDuration });
+        processingTimes.push({ 
+          step: '오디오 분할', 
+          duration: splitDuration,
+          startTime: splitStartTime,
+          endTime: splitEndTime
+        });
 
         // Whisper API 처리
         const whisperStartTime = Date.now();
@@ -153,9 +171,15 @@ export async function POST(req: Request) {
           const segmentDuration = transcription.segments.reduce((acc, segment) => acc + (segment.end - segment.start), 0);
           totalDuration += segmentDuration;
         }
-        const whisperDuration = getTimeInSeconds(whisperStartTime);
+        const whisperEndTime = Date.now();
+        const whisperDuration = (whisperEndTime - whisperStartTime) / 1000;
         await sendProgress(`음성 인식 완료 (${whisperDuration}초)`);
-        processingTimes.push({ step: '음성 인식', duration: whisperDuration });
+        processingTimes.push({ 
+          step: '음성 인식', 
+          duration: whisperDuration,
+          startTime: whisperStartTime,
+          endTime: whisperEndTime
+        });
 
         // 임시 파일 삭제
         fs.unlinkSync(audioPath);
@@ -164,7 +188,7 @@ export async function POST(req: Request) {
 
         // GPT 요약 생성
         const gptStartTime = Date.now();
-        await sendProgress('요약 생성 시작...');
+        await sendProgress('요약 시작...');
         const summary = await openai.chat.completions.create({
           model: "gpt-4o",
           messages: [
@@ -178,12 +202,17 @@ export async function POST(req: Request) {
             }
           ]
         });
-        const gptDuration = getTimeInSeconds(gptStartTime);
-        await sendProgress(`요약 생성 완료 (${gptDuration}초)`);
-        processingTimes.push({ step: 'GPT 요약', duration: gptDuration });
+        const gptEndTime = Date.now();
+        const gptDuration = (gptEndTime - gptStartTime) / 1000;
+        await sendProgress(`요약 완료 (${gptDuration}초)`);
+        processingTimes.push({ 
+          step: '요약', 
+          duration: gptDuration,
+          startTime: gptStartTime,
+          endTime: gptEndTime
+        });
 
-        // 최종 결과 전송 (진행 상황에 표시하지 않음)
-        const totalDurationSeconds = getTimeInSeconds(totalStartTime);
+        // 최종 결과 전송
         const result = {
           summary: summary.choices[0].message.content?.trim(),
           timestamps: allSegments.map(segment => ({
@@ -191,7 +220,7 @@ export async function POST(req: Request) {
             text: segment.text
           })),
           processingTimes,
-          totalDuration: totalDurationSeconds,
+          totalDuration: (Date.now() - totalStartTime) / 1000,
           videoInfoRaw
         };
         await writer.write(

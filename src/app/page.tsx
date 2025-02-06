@@ -24,8 +24,6 @@ export default function Home() {
   const [progress, setProgress] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [url, setUrl] = useState(DEFAULT_VIDEO_URL);
-  const [showNameInput, setShowNameInput] = useState(false);
-  const [tempAnalysis, setTempAnalysis] = useState<{ id: string; videoUrl: string } | null>(null);
   
   const { autoScrollEnabled, resetAutoScroll } = useAutoScroll(progress);
   const { 
@@ -62,9 +60,7 @@ export default function Home() {
         (data) => {
           setResult(data);
           setProgress('');
-          const newId = addAnalysis(submittedUrl, data);
-          setTempAnalysis({ id: newId, videoUrl: submittedUrl });
-          setShowNameInput(true);
+          addAnalysis(submittedUrl, data);
         },
         (error) => {
           setError(error);
@@ -117,26 +113,6 @@ export default function Home() {
         <VideoForm onSubmit={handleSubmit} loading={loading} defaultUrl={url} />
         <ProgressDisplay progress={progress} autoScrollEnabled={autoScrollEnabled} />
         <ErrorDisplay error={error} />
-        
-        {showNameInput && tempAnalysis && (
-          <div className={styles.nameInputContainer}>
-            <AnalysisNameInput
-              initialName={(() => {
-                return parsedVideoInfo?.title || '';
-              })()}
-              onSubmit={(name) => {
-                updateAnalysisName(tempAnalysis.id, name);
-                setShowNameInput(false);
-                setTempAnalysis(null);
-              }}
-              onCancel={() => {
-                deleteAnalysis(tempAnalysis.id);
-                setShowNameInput(false);
-                setTempAnalysis(null);
-              }}
-            />
-          </div>
-        )}
 
         {analyses.length > 0 && (
           <div className={styles.analysisSection}>
@@ -151,7 +127,14 @@ export default function Home() {
                 <AnalysisResultComponent analysis={selectedAnalysis} videoInfo={parsedVideoInfo} />
                 <button 
                   className={styles.deleteButton}
-                  onClick={() => deleteAnalysis(selectedAnalysis.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.confirm('이 분석 결과를 삭제하시겠습니까?')) {
+                      deleteAnalysis(selectedAnalysis.id);
+                      message.success('분석 결과가 삭제되었습니다.');
+                    }
+                  }}
                 >
                   삭제
                 </button>
