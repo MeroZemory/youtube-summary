@@ -35,7 +35,8 @@ export default function Home() {
     addAnalysis,
     updateAnalysisName,
     deleteAnalysis,
-    getSelectedAnalysis
+    getSelectedAnalysis,
+    clearAnalyses
   } = useAnalysisStore();
 
   const handleSubmit = async (submittedUrl: string) => {
@@ -95,7 +96,22 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.header}>
           <h1 className={styles.title}>유튜브 동영상 분석</h1>
-          <LoginButton />
+          <div className={styles.headerButtons}>
+            <LoginButton />
+            {analyses.length > 0 && (
+              <button
+                className={styles.clearButton}
+                onClick={() => {
+                  if (window.confirm('모든 분석 결과가 삭제됩니다. 계속하시겠습니까?')) {
+                    clearAnalyses();
+                    message.success('모든 분석 결과가 삭제되었습니다.');
+                  }
+                }}
+              >
+                캐시 비우기
+              </button>
+            )}
+          </div>
         </div>
         
         <VideoForm onSubmit={handleSubmit} loading={loading} defaultUrl={url} />

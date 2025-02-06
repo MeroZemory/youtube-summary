@@ -72,6 +72,12 @@ export function useAnalysisStore() {
     return analyses.find(analysis => analysis.id === selectedId) || null;
   };
 
+  const clearAnalyses = () => {
+    setAnalyses([]);
+    setSelectedId(null);
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
   return {
     analyses,
     selectedId,
@@ -80,5 +86,6 @@ export function useAnalysisStore() {
     updateAnalysisName,
     deleteAnalysis,
     getSelectedAnalysis,
+    clearAnalyses,
   };
 } 
