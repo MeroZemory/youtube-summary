@@ -19,18 +19,19 @@ export interface ProcessingTime {
 }
 
 export const zodVideoInfo = z.object({
-  title: z.string().optional(),
-  thumbnail: z.string().optional(),
-  duration: z.number().optional(),
-  channel: z.string().optional(),
-  upload_date: z.string().optional(),
+    title: z.string().optional(),
+    thumbnail: z.string().optional(),
+    duration: z.number().optional(),
+    channel: z.string().optional(),
+    upload_date: z.string().optional(),
 }).passthrough();
 
 export type ParsedVideoInfo = z.infer<typeof zodVideoInfo>;
 
 export interface AnalysisResult {
   summary: string;
-  timestamps: Array<{time: string, text: string}>;
+  fullText: string;
+  timestamps: Array<{ time: string; text: string }>;
   processingTimes: ProcessingTime[];
   totalDuration: number;
   videoInfoRaw: unknown;

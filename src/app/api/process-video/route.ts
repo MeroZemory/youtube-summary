@@ -218,35 +218,63 @@ export async function POST(req: Request) {
         fs.rmdirSync(segmentDir);
 
         // GPT 요약 생성
-        const gptStartTime = Date.now();
+        const summaryStartTime = Date.now();
         await sendProgress("요약 시작...");
-        const summary = await openai.chat.completions.create({
+        const summaryResult = await openai.chat.completions.create({
           model: "gpt-4o",
           messages: [
             {
               role: "system",
               content:
-                "You are a helpful assistant that summarizes video content.",
+                "당신은 영상 콘텐츠의 핵심을 간단명료하게 요약하는 도우미입니다.",
             },
             {
               role: "user",
-              content: `다음 텍스트를 한국어로 요약해주세요: ${fullTranscription}`,
+              content: `다음 텍스트의 핵심을 간단히 요약해주세요: ${fullTranscription}`,
             },
           ],
         });
-        const gptEndTime = Date.now();
-        const gptDuration = (gptEndTime - gptStartTime) / 1000;
-        await sendProgress(`요약 완료 (${gptDuration}초)`);
+        const summaryEndTime = Date.now();
+        const summaryDuration = (summaryEndTime - summaryStartTime) / 1000;
+        await sendProgress(`요약 완료 (${summaryDuration}초)`);
         processingTimes.push({
           step: "요약",
-          duration: gptDuration,
-          startTime: gptStartTime,
-          endTime: gptEndTime,
+          duration: summaryDuration,
+          startTime: summaryStartTime,
+          endTime: summaryEndTime,
+        });
+
+        // GPT 전체 내용 정리
+        const fullTextStartTime = Date.now();
+        await sendProgress("전체 내용 정리 시작...");
+        const fullTextResult = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            {
+              role: "system",
+              content:
+                "당신은 영상 콘텐츠의 전체 내용을 문서 형식으로 정리하는 도우미입니다.",
+            },
+            {
+              role: "user",
+              content: `다음 텍스트의 전체 내용을 정리하여 문서화해주세요: ${fullTranscription}`,
+            },
+          ],
+        });
+        const fullTextEndTime = Date.now();
+        const fullTextDuration = (fullTextEndTime - fullTextStartTime) / 1000;
+        await sendProgress(`전체 내용 정리 완료 (${fullTextDuration}초)`);
+        processingTimes.push({
+          step: "전체 내용 정리",
+          duration: fullTextDuration,
+          startTime: fullTextStartTime,
+          endTime: fullTextEndTime,
         });
 
         // 최종 결과 전송
         const result = {
-          summary: summary.choices[0].message.content?.trim(),
+          summary: summaryResult.choices[0].message.content?.trim(),
+          fullText: fullTextResult.choices[0].message.content?.trim(),
           timestamps: allSegments.map((segment) => ({
             time: new Date(segment.start * 1000)
               .toISOString()

@@ -53,6 +53,11 @@ export function AnalysisResult({ analysis, videoInfo }: AnalysisResultProps) {
         </section>
 
         <section className={styles.section}>
+          <h3>전체 내용</h3>
+          <p>{analysis.result.fullText}</p>
+        </section>
+
+        <section className={styles.section}>
           <h3>타임스탬프</h3>
           <div className={styles.timestamps}>
             {analysis.result.timestamps.map((stamp, index) => (
