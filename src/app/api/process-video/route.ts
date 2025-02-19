@@ -80,11 +80,22 @@ export async function POST(req: Request) {
         // 비디오 다운로드
         const downloadStartTime = Date.now();
         await sendProgress("비디오 다운로드 시작...");
-        const videoPath = path.join(tempDir, `${Date.now()}.webm`);
+        const tempFileName = `${Date.now()}`;
+        const tempVideoPath = path.join(tempDir, tempFileName);
         await youtubedl(url, {
-          output: videoPath,
+          output: tempVideoPath,
           format: "bestvideo+bestaudio/best",
         });
+
+        // 실제 다운로드된 파일명 찾기
+        const downloadedFiles = fs.readdirSync(tempDir);
+        const videoFile = downloadedFiles.find((file) =>
+          file.startsWith(tempFileName)
+        );
+        if (!videoFile) {
+          throw new Error("다운로드된 비디오 파일을 찾을 수 없습니다.");
+        }
+        const videoPath = path.join(tempDir, videoFile);
         const downloadEndTime = Date.now();
         const downloadDuration = (downloadEndTime - downloadStartTime) / 1000;
         await sendProgress(`비디오 다운로드 완료 (${downloadDuration}초)`);
